@@ -33,6 +33,9 @@ impl RecipeManager {
     pub fn get_all_recipes(&self) -> Vec<Recipe> {&self.recipes}
 
     // Function to get a specific recipe based on its id
-    //TODO: Figure out what tf .iter().rust(|r| r.id == id) does
-    pub fn get_recipe(&self, id: u32) -> Option<&Recipe> {self.recipes.iter().find(|r| r.id == id)}
+    pub fn get_recipe(&self, id: u32) -> Option<&Recipe> {
+        // .iter() --> Creates an iterator over the recipes vec.
+        // .find(|r| r.id == id) --> Finds based on a condition, the condition takes r as the current item in recipes (Recipe struct) and checks if it's id matches the id passed in
+        self.recipes.iter().find(|r| r.id == id)
+    }
 }
