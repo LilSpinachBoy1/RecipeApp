@@ -83,6 +83,42 @@ impl Sandbox for RecipeManagerGUI {
                     self.editing = true;
                 }
             }
+
+            Message::UpdateRecipe => {
+                if let Some(recipe) = &self.selected_recipe {  // If there is a currently selected recipe
+                    let servings = self.recipe_servings.parse().unwrap_or(recipe.servings);  // Servings will either be the converted servings from self, or the number in the accessed recipe
+                    self.recipe_manager.update_recipe(recipe.id, self.recipe_name.clone(), self.recipe_ingredients.split(",").map(String::from).collect(), self.recipe_instructions.split("\n").map(String::from).collect(), servings);
+                }
+
+                // No longer editing the recipe
+                self.editing = false;
+                self.selected_recipe = None;
+            }
+
+            Message::CancelEdit => {
+                // Set editing to false and clear all values in recipemanager
+                self.editing = false;
+                self.recipe_name.clear();
+                self.recipe_ingredients.clear();
+                self.recipe_instructions.clear();
+                self.recipe_servings.clear();
+            }
+
+            Message::RecipeNameChanged(name) => {
+                self.recipe_name = name;
+            }
+
+            Message::RecipeIngredientsChanged(ingredients) => {
+                self.recipe_ingredients = ingredients;
+            }
+
+            Message::RecipeInstructionsChanged(instructions) => {
+                self.recipe_instructions = instructions;
+            }
+
+            Message::RecipeServingsChanged(servings) => {
+                self.recipe_servings = servings
+            }
         }
     }
 }
