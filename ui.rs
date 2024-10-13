@@ -96,7 +96,7 @@ impl Sandbox for RecipeManagerGUI {
             }
 
             Message::CancelEdit => {
-                // Set editing to false and clear all values in recipemanager
+                // Set editing to false and clear all values in recipe manager
                 self.editing = false;
                 self.recipe_name.clear();
                 self.recipe_ingredients.clear();
@@ -118,6 +118,31 @@ impl Sandbox for RecipeManagerGUI {
 
             Message::RecipeServingsChanged(servings) => {
                 self.recipe_servings = servings
+            }
+
+            Message::RecipeSelected(recipe) => {
+                self.selected_recipe = Some(recipe);
+                self.editing = false;
+            }
+
+            Message::DeleteRecipe(id) => {
+                if self.recipe_manager.delete_recipe(id) {
+                    self.selected_recipe = None;
+                }
+            }
+
+            Message::SaveRecipes => {
+                // If the recipe manager is unable to save to a file (will still save if successful)
+                if let Err(e) = self.recipe_manager.save_to_file("recipes.json") {
+                    self.error_message = Some(format!("Failed to save recipes: {}", e));
+                }
+            }
+
+            Message::LoadRecipes => {
+                match self.recipe_manager.load_from_file("recipes.json") {
+                    Ok(_) => self.selected_recipe = None,
+                    Err(e) => self.error_message = Some(format!("Failed to load recipes: {}", e)),
+                }
             }
         }
     }
